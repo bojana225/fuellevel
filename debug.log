@@ -1,0 +1,5 @@
+[0304/182957:ERROR:backend_impl.cc(2020)] Corrupt Index file
+[0304/182957:ERROR:cache_util_win.cc(20)] Unable to move the cache: 5
+[0304/182957:ERROR:cache_util.cc(134)] Unable to move cache folder C:\ProgramData\Altium\Altium Designer {ED186E6B-4A49-42DC-926A-FC82171BF5F9}\BrowserCache to C:\ProgramData\Altium\Altium Designer {ED186E6B-4A49-42DC-926A-FC82171BF5F9}\old_BrowserCache_000
+[0304/182957:ERROR:cache_creator.cc(129)] Unable to create cache
+[0304/183002:FATAL:memory.cc(19)] Out of memory. size=4194304
