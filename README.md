@@ -20,10 +20,7 @@ Zadatak ovog projekta osim same funkcionalnosti je bila i implementacija Misra s
 					      FORMULA: STARTpercent - STOPpercent
   6. Prilikom računanja nivoa goriva u procentima, ukoliko ta vrednost iznosi manje od 10% pali se prva dioda od dole u prvom stupcu LED bar-a. U suprotnom ona ne svetli.
   7. Potrebno je preko kanala 1 slati nivo goriva u procentima svakih 1s ka PC-ju.
-  8. Ukoliko se pritisne prva dioda od dole u trećem stupcu (i samo je ona aktivna) na 7seg displeju se ispisuje skroz sa leve strane trenutni nivo goriva u procentima-PercentValue (rezervisane 3 cifre za to), 
-     a na kraju (poslednjih 5 cifara) se ispisuje vrednost očitane otpornosti-AverageValue. Kada nijedan taster nije aktivan u tom stupcu, 7seg displej je isključen. Ukoliko se pritisne druga dioda (taster) od dole
-     u trećem stupcu tada se na 7seg displeju na levoj strani ispisuje koliko još km automobil može da se kreće sa trenutnom količinom goriva-AutonomyValue, a na samom kraju 7seg displeja ispisuje se rezultat poslednjeg
-     merenja START-STOP komande opisane u tački 5(DIFFERENCEValue). Brzina osvežavanja displeja je 100ms.
+  8. U zavisnosti koji taster je pritisnut na 7seg displeju treba prikazati trenutni nivo goriva u proceentima i vrednosti očitane otpornosti, ili autonomiju vozila i potrošenu količinu goriva u procentima. Brzina osvežavanja displeja je 100ms.
   
 
 ## Periferije
@@ -119,5 +116,19 @@ Korišćene lokalne promenljive u ovom tasku:
 •u_CalculatedDIFFERENCEValue, u_CalculatedAutonomyValue, u_CalculatedPercentValue, u_CalculatedAverageValue-skladište se vrednosti dobijene preko reda
 Svakih 100ms iz callback funkcije tajmera dobija se semafor za ispis na displej. Primaju se po dva reda u zavisnosti šta je potrebno ispisati na displej. 
 Desetice vrednosti se dobijaju deljenjem sa 10 a jedinice kao ostatk pri deljenju sa 10. Proveravamo vrednost promenljive d i na osnovu toga ispisujemo šta je potrebno. 
+Ako je pritisnut drugi taster nultog stubca želimo da se prikaze trenutni nivo goriva u procentima-PercentValue i vrednost očitane otpornosti-AverageValue,
+ako je pritisnut treći taster želimo da se prikaže autonomija vozila-AutonomyValue i potrošena količina goriva u procentima odnosno razlika između komandi START i STOP-DIFFERENCEValue.
 
+
+### v_ReceivingCommands(void* p_Parameters)
+Task je najvisšg prioriteta, 1. Služi za prijem tekstualnih komandi sa serijske komunikacije (sa kanala 1) i prosleđivanje informacija o komandi tasku za obradu i slanje podataka ka PC-ju.
+Pošto je funkcija dosta dugačka i kompleksna, opisana je u komentarima u samom kodu kako bi bilo preglednije.
+
+### v_SendingToPC(void* p_Parameters)
+Ovaj task ima funkciju da ispisuje trenutnu količinu goriva prema PC-ju u procentima na kanalu 1 serijske komunikacije.  Definisanse su sledeće lokalne promenljive:
+•u_CommandSize-dužina komande koju je potrebno ispisati
+•u_PercentValueForWriting-promenljiva koja čuva prosečnu količinu goriva u procentima koju je potrebno ispisati, primljena je vrednost preko reda
+•a_Command[13]-komanda koju je potrebno ispisati
+Na početku primamo red koji sadrži podatak o trenutnoj količini goriva u procentima koju je potrebno ispisati. Čekamo da dobijemo semafor za ispis na serijsku, dobijamo ga iz callback funkcije tajmera na svakih 1000ms.
+Kada pošaljemo trenutnu količinu goriva u procentima šalje se karakter za kraj poruke.
  
