@@ -45,8 +45,6 @@ static volatile uint16_t u_currentMIN = 0;
 static volatile uint16_t u_currentMAX = 0;
 //Trenutna vrednost prosecne potrosnje
 static volatile uint8_t u_PP = 0;
-//Promenljiva koja ima vrednost 0 ako je Start iskljucen i vrednost 1 ako je ukljucen
-static volatile uint8_t  u_StartON = 0;
 //Niz od 5 elemenata koji sadrzi poslednjih 5 vrednosti otpornosti, a ponasa se kao cirkularni buffer
 static volatile uint8_t  a_Values[5] = { 0 };
 static volatile uint8_t u_SetStartOrStop[2] = { 0 };
