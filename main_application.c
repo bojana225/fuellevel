@@ -45,14 +45,11 @@ static volatile uint16_t u_currentMIN = 0;
 static volatile uint16_t u_currentMAX = 0;
 //Trenutna vrednost prosecne potrosnje
 static volatile uint8_t u_PP = 0;
+//Promenljiva koja ima vrednost 0 ako je Start iskljucen i vrednost 1 ako je ukljucen
+static volatile uint8_t  u_StartON = 0;
 //Niz od 5 elemenata koji sadrzi poslednjih 5 vrednosti otpornosti, a ponasa se kao cirkularni buffer
 static volatile uint8_t  a_Values[5] = { 0 };
 static volatile uint8_t u_SetStartOrStop[2] = { 0 };
-//Pozicija u nizu na koju se upisuje sledeci element (ocitana vrednost otpornosti)
-static uint8_t u_WriteIndex = 0;
-/*Pozicija u nizu sa koje se cita sledeci element(npr kada ih citamo i trazimo srednju vrednost, da znamo gde smo stali sa citanjem ako nas neko prekine
-(neki task viseg prioriteta koji je spreman npr)*/
-static uint8_t u_ReadIndex = 0;
 
 /*SEMAPHORES*/
 SemaphoreHandle_t s_DataSendingToPC_Semaphore;
@@ -246,10 +243,10 @@ void main_demo(void)
 
 	/*CREATING TASKS*/
 	//Task sa prioritetom TASK_PRIO_1 ima najvisi prioritet i tako redom (kada se ubaci makro dobije se najvisi broj prioriteta)
-	xTaskCreate(v_MeasuringAverageFuelLevel, "AVE", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_2, NULL);
+	xTaskCreate(v_MeasuringAverageFuelLevel, "AVE", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_3, NULL);
 	xTaskCreate(v_LEDReadingStates, "LRS", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_2, NULL);
 	xTaskCreate(v_LEDStatesProcessing, "LED", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_3, NULL);
-	xTaskCreate(v_FuelLevelInPercent, "PER", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_3, NULL);
+	xTaskCreate(v_FuelLevelInPercent, "PER", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_2, NULL);
 	xTaskCreate(v_7SEGWriting, "7SEG", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_2, NULL);
 	xTaskCreate(v_SendingToPC, "CP", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_2, NULL);
 	xTaskCreate(v_ReceivingCommands, "RC", configMINIMAL_STACK_SIZE, NULL, TASK_PRIO_1, NULL);
@@ -283,16 +280,9 @@ static void v_FuelLevelInPercent(void* pvParameters)
 			u_Resistance = atoi(a_ReceivedString);
 			u_NumOfCharacter = 0;
 			//printf("%d", u_Resistance);
-			/*Ako konvertovani string ima vrednost izmedju 0 i 10000, pozivamo funkciju proracun u procentima i upisujemo novu vrednost na sledecu poziciju u nizu*/
+			/*Ako konvertovani string ima vrednost izmedju 0 i 10000, pozivamo funkciju proracun u procentima*/
 			if ((u_Resistance) >= 0 && (u_Resistance < 10000)) {
 				v_FuelLevelPercent(&u_Resistance, &u_FuelLevelPercent);
-				a_Values[u_WriteIndex] = u_FuelLevelPercent;
-				u_WriteIndex++;
-			}
-			/*Cirkularni bafer- ako smo stigli do poslednjeg elementa vracamo se na pocetak i pisemo ponovo*/
-			if (u_WriteIndex == 5)
-			{
-				u_WriteIndex = 0;
 			}
 		}
 		/*Ako jos nije kraj stringa, ucitavamo dalje karaktere*/
@@ -348,7 +338,7 @@ void v_LEDStatesProcessing(void* p_Parameters)
 			d = 0;
 		}
 
-		//START i STOP su realizovani preko tastera
+		//START i STOP naredbe
 		if ((u_SetStartOrStop[0]))
 		{
 			STARTpercent = u_PercentValueReceived;
@@ -358,7 +348,6 @@ void v_LEDStatesProcessing(void* p_Parameters)
 		{
 			STOPpercent = u_PercentValueReceived;
 			u_DIFFERENCE = STARTpercent - STOPpercent;
-			set_LED_BAR(2, 0x02);
 		}
 		else {
 			set_LED_BAR(2, 0x00);
@@ -374,7 +363,6 @@ void v_MeasuringAverageFuelLevel(void* p_Parameters)
 	u_currentMIN = a_Values[0];
 	u_currentMAX = a_Values[0];
 	uint8_t u_AverageValue = 0;
-	//uint8_t u_PP = 0;
 	uint8_t u_Autonomy = 0;
 	uint8_t u_PercentValueReceived = 0;
 	uint8_t PercentValue = 0;
@@ -529,8 +517,6 @@ void v_ReceivingCommands(void* p_Parameters)
 			{
 				a_ValueMinOrMax[0] = a_CommandLetters[7];
 				a_ValueMinOrMax[1] = a_CommandLetters[8];
-				a_ValueMinOrMax[2] = a_CommandLetters[9];
-				a_ValueMinOrMax[3] = a_CommandLetters[10];
 				/*Namerno castujemo povratnu vrednost funkcije u uint8_t, iz razloga da se setuje maximalna vrednost opsega ako je prosledjena
 				vrednost veca od maximalne (manje od 0 ne moze zbog tipa elemenata niza koji su unsigned)
 				Ovo se moglo resiti i dodatnom lokalnom promenljivom koja bi npr bila uin16_t tipa i nju bismo proveravali da li upada u opseg
@@ -551,8 +537,6 @@ void v_ReceivingCommands(void* p_Parameters)
 			{
 				a_ValueMinOrMax[0] = a_CommandLetters[7];
 				a_ValueMinOrMax[1] = a_CommandLetters[8];
-				a_ValueMinOrMax[2] = a_CommandLetters[9];
-				a_ValueMinOrMax[3] = a_CommandLetters[10];
 				u_GetMinOrMaxValue = (uint8_t)atoi(a_ValueMinOrMax);
 				if (u_GetMinOrMaxValue <= PREDEFINED_MAX)
 				{
@@ -566,7 +550,6 @@ void v_ReceivingCommands(void* p_Parameters)
 			else if ((u_WordSize == sizeof("PP--") - 1) && (strncmp(a_CommandLetters, ("PP"), (u_WordSize - 2)) == 0))
 			{
 				a_ValuePP[0] = a_CommandLetters[2];
-				a_ValuePP[1] = a_CommandLetters[3];
 				u_GetPPValue = (uint8_t)atoi(a_ValuePP);
 				if (u_GetPPValue <= MAXFUEL)
 				{
