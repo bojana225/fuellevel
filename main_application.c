@@ -1,4 +1,4 @@
-﻿/* Standard includes. */
+/* Standard includes. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -120,6 +120,12 @@ static void v_7SEGWritingCallback(TimerHandle_t t_7SEG_Writing)
 	xSemaphoreGive(s_7SEG);
 }
 
+/*static void v_ResReadingCallback(TimerHandle_t t_ResReading_Timer);
+static void v_ResReadingCallback(TimerHandle_t t_ResReading_Timer)
+{
+	xSemaphoreGive(s_ResReading_Semaphore);
+}*/
+
 //Svakih 1000ms se daje semafor za ispis podataka na PC (serijsku)
 static void v_DataSendingToPCCallback(TimerHandle_t t_DataSending_Timer);
 static void v_DataSendingToPCCallback(TimerHandle_t t_DataSending_Timer)
@@ -204,7 +210,9 @@ void main_demo(void)
 	t_7SEG_Writing = xTimerCreate("Timer", pdMS_TO_TICKS(100), pdTRUE, NULL, v_7SEGWritingCallback);
 	//Startovanje tajmera za ispis na displej
 	xTimerStart(t_7SEG_Writing, 0);
-
+	//Ovo je druga opcija ako otpornosti zelimo da citamo svakih 100ms sa serijske a ne da koristimo interrupt za prijem karaktera
+	//t_ResReading_Timer = xTimerCreate("Timer1", pdMS_TO_TICKS(100), pdTRUE, NULL, v_ResReadingCallback);
+	//xTimerStart(t_ADCReading_Timer, 0);
 	t_DataSending_Timer = xTimerCreate("Timer2", pdMS_TO_TICKS(1000), pdTRUE, NULL, v_DataSendingToPCCallback);
 	//Startovanje tajmera za ispis na PC
 	xTimerStart(t_DataSending_Timer, 0);
