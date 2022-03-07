@@ -145,13 +145,13 @@ static void v_FuelLevelPercent(uint16_t* p_ResValue, uint8_t* p_PercentValue)
 		printf("In percent %d %% \n", p_PercentValue);
 		if (p_PercentValue < (uint16_t)10)
 		{
-			if (set_LED_BAR(0, 0x01) != 0)
+			if (set_LED_BAR(1, 0x01) != 0)
 			{
 				printf("Problem");
 			}
 			else
 			{
-				if (set_LED_BAR(0, 0x00) != 0)
+				if (set_LED_BAR(1, 0x00) != 0)
 				{
 					printf("No problem");
 				}
