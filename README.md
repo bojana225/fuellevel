@@ -70,7 +70,7 @@ Program je podeljen u 7 taskova kojima je dodeljena minimalna potrebna veličina
 Glavni .c fajl ovog projekta je main_application.c
 
 ### v_FuelLevelInPercent(void* pvParameters)
-Ovo je jedan od taskova u kojima se primaju vrednosti pristigle sa serijske komunikacije. Kanal 0 serijske komunikacije u ovom slučaju daje trenutnu vrednost otpornosti u automobilu. S obzirom da je ovo jedan od glavnih taskova programa, dodeljen mu je najviši prioritet.
+Ovo je jedan od taskova u kojima se primaju vrednosti pristigle sa serijske komunikacije. Kanal 0 serijske komunikacije u ovom slučaju daje trenutnu vrednost otpornosti u automobilu. S obzirom da je ovo jedan od glavnih taskova programa, dodeljen mu je prioritet 2.
 Na početku funkcije se definišu sledeće lokalne promenljive:
 •u_Resistance-primljena vrednost otpornosti
 •u_FuelLevelPercent-proračunata vrednost nivoa goriva u procentima
@@ -98,9 +98,7 @@ U ovom tasku se primaju dva reda-prvi dostavlja podatak o stanju ulaznih LEDovki
 izračunatu vrednost nivoa goriva u procentima. Ako je uključena prva odole dioda, znači da je Start uključen i kao indikacija se pali prva odole dioda narednog (drugog) stubca. 
 Ako je pritisnut drugi taster nultog stubca želimo da se prikaze trenutni nivo goriva i vrednost očitane otpornosti,
 ako je pritisnut treći taster želimo da se prikaze autonomija vozila i potrošena količina goriva u procentima.
-Zatim proveravamo članove niza u_SetStartOrStop[2]-ako je setovan prvi član niza, promenljiva STARTpercent dobija vrednost iz reda u_PercentValueReceived i u skladu sa tekstom 
-zadatka pali se dioda trećeg stubca da signalizira aktivno merenje, a ako je setovan drugi član tada promenljiva STOPpercent dobija vrednost iz reda u_PercentValueReceived i 
-računa se razlika ove dve vrednosti i smešta u red, a dioda se gasi. 
+Zatim proveravamo članove niza u_SetStartOrStop[2]-ako je setovan prvi član niza, promenljiva STARTpercent dobija vrednost iz reda u_PercentValueReceived i u skladu sa tekstom zadatka pali se dioda trećeg stubca da signalizira aktivno merenje, a ako je setovan drugi član tada promenljiva STOPpercent dobija vrednost iz reda u_PercentValueReceived i računa se razlika ove dve vrednosti i smešta u red, a dioda se gasi. 
 
 
 ### v_MeasuringAverageFuelLevel(void* p_Parameters)
@@ -115,7 +113,7 @@ Korišćene lokalne promenljive u ovom tasku:
 •DIFF, AUT, Per, Ave-kopiraju sebi vrednost koji treba ispisati
 •u_CalculatedDIFFERENCEValue, u_CalculatedAutonomyValue, u_CalculatedPercentValue, u_CalculatedAverageValue-skladište se vrednosti dobijene preko reda
 Svakih 100ms iz callback funkcije tajmera dobija se semafor za ispis na displej. Primaju se po dva reda u zavisnosti šta je potrebno ispisati na displej. 
-Desetice vrednosti se dobijaju deljenjem sa 10 a jedinice kao ostatk pri deljenju sa 10. Proveravamo vrednost promenljive d i na osnovu toga ispisujemo šta je potrebno. 
+Desetice vrednosti se dobijaju deljenjem sa 10 a jedinice kao ostatak pri deljenju sa 10. Proveravamo vrednost promenljive d i na osnovu toga ispisujemo šta je potrebno. 
 Ako je pritisnut drugi taster nultog stubca želimo da se prikaze trenutni nivo goriva u procentima-PercentValue i vrednost očitane otpornosti-AverageValue,
 ako je pritisnut treći taster želimo da se prikaže autonomija vozila-AutonomyValue i potrošena količina goriva u procentima odnosno razlika između komandi START i STOP-DIFFERENCEValue.
 
