@@ -95,7 +95,7 @@ Na početku su definisane lokalne promenljive:
 •STOPpercent-promenljiva u koju treba uneti neku vrednost nivoa goriva u procentima
 •u_DIFFERENCE-promenljiva u kojoj se računa razlika između promenljivih STARTpercent i STOPpercent
 U ovom tasku se primaju dva reda-prvi dostavlja podatak o stanju ulaznih LEDovki, a drugi sadrži 
-izračunatu prosečnu vrednost nivoa goriva. Ako je uključena prva odole dioda, znači da je Start uključen i kao indikacija se pali prva odole dioda narednog (drugog) stubca. 
+izračunatu vrednost nivoa goriva u procentima. Ako je uključena prva odole dioda, znači da je Start uključen i kao indikacija se pali prva odole dioda narednog (drugog) stubca. 
 Ako je pritisnut drugi taster nultog stubca želimo da se prikaze trenutni nivo goriva i vrednost očitane otpornosti,
 ako je pritisnut treći taster želimo da se prikaze autonomija vozila i potrošena količina goriva u procentima.
 Zatim proveravamo članove niza u_SetStartOrStop[2]-ako je setovan prvi član niza, promenljiva STARTpercent dobija vrednost iz reda u_PercentValueReceived i u skladu sa tekstom 
@@ -104,7 +104,7 @@ računa se razlika ove dve vrednosti i smešta u red, a dioda se gasi.
 
 
 ### v_MeasuringAverageFuelLevel(void* p_Parameters)
-U ovom tasku računamo trenutnu minimalnu i maksimalnu vrednost napona iz poslednjih 5 očitavanja. Prolazimo kroz elemente niza a_Values[20] tj. kroz cirkularni bafer koji čuva poslednjih 5 očitanih vrednosti otpornosti. 
+U ovom tasku računamo trenutnu minimalnu i maksimalnu vrednost napona iz poslednjih 5 očitavanja. Prolazimo kroz elemente niza a_Values[5] tj. kroz cirkularni bafer koji čuva poslednjih 5 očitanih vrednosti otpornosti. 
 I minimalnoj i maksimalnoj vrednosti na početku dodelimo vrednost prvog člana niza, a zatim za svaki sledeći član poveravamo da li je veći od maksimuma ili manji od minimuma i ukoliko jeste, on postaje maksimum ili minimum.
 Pored kalibracije, u ovom tasku se računa autonomija vozila preko gore spomenute formule i smešta se u red.
 
