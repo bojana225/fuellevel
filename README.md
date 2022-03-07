@@ -58,7 +58,7 @@ Druga dva značajna prekida se generišu kada stigne karakter preko serijske kom
 ## Redovi
 
 Redovi u FreeRTOS-u služe najviše za razmenu podataka između taskova kao i između taskova i prekida. Njima se može izbeći korišćenje globalnih promenljivih i samim tim zaključavanje resursa. Najčešće se koriste kao FIFO (First In First Out) baferi, tako što će prvi podatak koji
-je poslat biti prvi i primljen od strane taska kojem se šalje. Podaci se kopiraju u bafer a zatim šalju. Kernel alocira automatski memoriju za skladištenje podataka u red u trenutku kada ga kreiramo. U ovom projektu je kreirani i korišćeni sledeći redovi: q_PercentValue, q_AverageValue,
+je poslat biti prvi i primljen od strane taska kojem se šalje. Podaci se kopiraju u bafer a zatim šalju. Kernel alocira automatski memoriju za skladištenje podataka u red u trenutku kada ga kreiramo. U ovom projektu su kreirani i korišćeni sledeći redovi: q_PercentValue, q_AverageValue,
 q_LEDStates, q_Autonomy i q_DIFFERENCE.
 
 ## Funkcionalnosti taskova glavnog programa
