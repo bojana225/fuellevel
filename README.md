@@ -18,7 +18,7 @@ Zadatak ovog projekta osim same funkcionalnosti je bila i implementacija Misra s
   5. Komande START i STOP imaju za zadatak da izmere kolika količina goriva u procentima je potrošena u vremenskom razmaku između slanja te dve naredbe. 
      Prilikom slanja START i STOP naredbi, u tim trenucima zapamtile su se vrednosti nivoa goriva u procentima, tako da se podatak o potrošenoj količini goriva u procentima dobija kao njihova razlika.
 					      FORMULA: STARTpercent - STOPpercent
-  6. Prilikom računanja nivoa goriva u procentima, ukoliko ta vrednost iznosi manje od 10% pali se prva dioda od dole u prvom stupcu LED bar-a. U suprotnom ona ne svetli.
+  6. Prilikom računanja nivoa goriva u procentima, ukoliko ta vrednost iznosi manje od 10% pali se prva dioda od dole u drugom stupcu LED bar-a. U suprotnom ona ne svetli.
   7. Potrebno je preko kanala 1 slati nivo goriva u procentima svakih 1s ka PC-ju.
   8. U zavisnosti koji taster je pritisnut na 7seg displeju treba prikazati trenutni nivo goriva u proceentima i vrednosti očitane otpornosti, ili autonomiju vozila i potrošenu količinu goriva u procentima. Brzina osvežavanja displeja je 100ms.
   
@@ -26,7 +26,7 @@ Zadatak ovog projekta osim same funkcionalnosti je bila i implementacija Misra s
 ## Periferije
 
 Periferije koje je potrebno koristiti su LED_bar, 7seg displej i AdvUniCom softver za simulaciju serijske komunikacije.
-Prilikom pokretanja LED_bars_plus.exe navesti RRrr kao argument da bi se dobio led bar sa 2 izlazna i 2 ulazna stupca crvene boje.
+Prilikom pokretanja LED_bars_plus.exe navesti rRR kao argument da bi se dobio led bar sa 2 izlazna i 1 ulazna stupca crvene boje.
 Prilikom pokretanja Seg7_Mux.exe navesti kao argument broj 9, kako bi se dobio 7-seg displej sa 9 cifara.
 Što se tiče serijske komunikacije, potrebno je otvoriti i kanal 0 i kanal 1. Kanal 0 se automatski otvara pokretanjem AdvUniCom.exe, 
 a kanal 1 otvoriti dodavanjem broja jedan kao argument: AdvUniCom.exe 1.
@@ -95,7 +95,7 @@ Na početku su definisane lokalne promenljive:
 •STOPpercent-promenljiva u koju treba uneti neku vrednost nivoa goriva u procentima
 •u_DIFFERENCE-promenljiva u kojoj se računa razlika između promenljivih STARTpercent i STOPpercent
 U ovom tasku se primaju dva reda-prvi dostavlja podatak o stanju ulaznih LEDovki, a drugi sadrži 
-izračunatu vrednost nivoa goriva u procentima. Ako je uključena prva odole dioda, znači da je Start uključen i kao indikacija se pali prva odole dioda narednog (drugog) stubca. 
+izračunatu vrednost nivoa goriva u procentima. Ako je poslata naredba START kao indikacija se pali prva odole dioda trećeg stubca. 
 Ako je pritisnut drugi taster nultog stubca želimo da se prikaze trenutni nivo goriva i vrednost očitane otpornosti,
 ako je pritisnut treći taster želimo da se prikaze autonomija vozila i potrošena količina goriva u procentima.
 Zatim proveravamo članove niza u_SetStartOrStop[2]-ako je setovan prvi član niza, promenljiva STARTpercent dobija vrednost iz reda u_PercentValueReceived i u skladu sa tekstom zadatka pali se dioda trećeg stubca da signalizira aktivno merenje, a ako je setovan drugi član tada promenljiva STOPpercent dobija vrednost iz reda u_PercentValueReceived i računa se razlika ove dve vrednosti i smešta u red, a dioda se gasi. 
