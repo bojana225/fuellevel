@@ -121,7 +121,7 @@ ako je pritisnut treći taster želimo da se prikaže autonomija vozila-Autonomy
 
 
 ### v_ReceivingCommands(void* p_Parameters)
-Task je najvisšg prioriteta, 1. Služi za prijem tekstualnih komandi sa serijske komunikacije (sa kanala 1) i prosleđivanje informacija o komandi tasku za obradu i slanje podataka ka PC-ju.
+Task je najvišeg prioriteta, 1. Služi za prijem tekstualnih komandi sa serijske komunikacije (sa kanala 1) i prosleđivanje informacija o komandi tasku za obradu i slanje podataka ka PC-ju.
 Pošto je funkcija dosta dugačka i kompleksna, opisana je u komentarima u samom kodu kako bi bilo preglednije.
 
 ### v_SendingToPC(void* p_Parameters)
