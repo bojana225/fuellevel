@@ -511,7 +511,17 @@ void v_ReceivingCommands(void* p_Parameters)
 		//Ako smo dosli do kraja komande, obradjujemo je i setujemo promenljive
 		if (u_Character == 0x0d)
 		{
-			if ((u_WordSize == sizeof("MINFUEL--") - 1) && (strncmp(a_CommandLetters, ("MINFUEL"), (u_WordSize - 2)) == 0))
+			if ((u_WordSize == sizeof("START") - 1) && (strncmp(a_CommandLetters, ("START"), u_WordSize) == 0)) 
+			{
+				u_SetStartOrStop[0] = 1u;
+				u_SetStartOrStop[1] = 0u;
+			}
+			else if ((u_WordSize == sizeof("STOP") - 1) && (strncmp(a_CommandLetters, ("STOP"), u_WordSize) == 0)) 
+			{
+				u_SetStartOrStop[0] = 0u;
+				u_SetStartOrStop[1] = 1u;
+			}
+			else if ((u_WordSize == sizeof("MINFUEL--") - 1) && (strncmp(a_CommandLetters, ("MINFUEL"), (u_WordSize - 2)) == 0))
 			{
 				a_ValueMinOrMax[0] = a_CommandLetters[7];
 				a_ValueMinOrMax[1] = a_CommandLetters[8];
